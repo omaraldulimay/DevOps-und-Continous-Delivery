@@ -1,0 +1,7 @@
+# Ignoriere VSCode-spezifische Konfigurationsdateien
+.vscode/
+
+# Ignoriere andere temporäre Dateien oder Umgebungen
+*.log
+*.pyc
+__pycache__/
