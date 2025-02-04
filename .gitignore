@@ -5,3 +5,6 @@
 *.log
 *.pyc
 __pycache__/
+
+# Ignoriere die Fallstudie-Datei
+fallstudie.md
