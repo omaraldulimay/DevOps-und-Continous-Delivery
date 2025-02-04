@@ -41,9 +41,9 @@ jobs:
 
       - name: Docker Container testen
         run: |
-          docker run -d --rm mein-app gunicorn -b 0.0.0.0:5002 mein_app:app
+          docker run -d --rm -p 5002:5002 mein-app gunicorn -b 0.0.0.0:5002 app:app
           sleep 10  # Warte einige Sekunden, um den Server zu starten
-          curl --fail http://localhost:5002 || exit 1
+           curl --fail http://localhost:5002 || exit 1
 
       - name: Docker Image pushen
         if: github.ref == 'refs/heads/main'
