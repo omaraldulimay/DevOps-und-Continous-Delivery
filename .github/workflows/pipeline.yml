@@ -13,53 +13,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Schritt 1: Code aus Repository laden
       - name: Code aus Repository laden
         uses: actions/checkout@v4
 
+      # Schritt 2: Python-Umgebung einrichten
       - name: Python-Umgebung einrichten
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
+      # Schritt 3: Abhängigkeiten installieren
       - name: Abhängigkeiten installieren
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Tests ausführen mit Coverage
-        run: pytest --cov=app --cov-report=xml > coverage.xml
-
-      - name: Testberichte speichern
-        uses: actions/upload-artifact@v4
-
-        with:
-          name: test-coverage-report
-          path: coverage.xml
-
+      # Schritt 4: Linter (flake8) ausführen
       - name: Code-Qualität mit Flake8 prüfen
         run: |
           pip install flake8
           flake8 --max-line-length=88 app.py
 
+      # Schritt 5: Tests ausführen mit Coverage
+      - name: Tests ausführen mit Coverage
+        run: |
+          pytest --cov=app --cov-report=xml > coverage.xml
+
+      # Schritt 6: Testberichte speichern
+      - name: Testberichte speichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage-report
+          path: coverage.xml
+
+      # Schritt 7: Überprüfe pytest Installation
       - name: Überprüfe pytest Installation
         run: |
           pytest --version || echo "pytest wurde nicht installiert."
 
+      # Schritt 8: Unit-Tests ausführen
       - name: Unit-Tests ausführen
         run: pytest || echo "Tests fehlgeschlagen, trotzdem weiter"
 
+      # Schritt 9: Docker Version check
       - name: Docker Version check
         run: docker --version
 
+      # Schritt 10: Docker Build
       - name: Docker Build
         run: docker build -t mein-app .
 
+      # Schritt 11: Docker Container testen
       - name: Docker Container testen
         run: |
           docker run -d --rm -p 5002:5002 mein-app gunicorn -b 0.0.0.0:5002 app:app
           sleep 10  # Warte einige Sekunden, um den Server zu starten
           curl --fail http://localhost:5002 || exit 1
 
+      # Schritt 12: Docker Image pushen
       - name: Docker Image pushen
         if: github.ref == 'refs/heads/main'
         run: |
@@ -67,6 +79,7 @@ jobs:
           docker tag mein-app ${{ secrets.DOCKERHUB_USERNAME }}/mein-app:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/mein-app:latest
 
+      # Schritt 13: Testberichte hochladen (optional, falls du zusätzliche Berichte hast)
       - name: Testberichte hochladen
         uses: actions/upload-artifact@v4
         with:
