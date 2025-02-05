@@ -26,6 +26,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Tests ausführen mit Coverage
+        run: pytest --cov=app --cov-report=xml > coverage.xml
+
+      - name: Testberichte speichern
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage-report
+          path: coverage.xml
+
       - name: Code-Qualität mit Flake8 prüfen
         run: |
           pip install flake8
